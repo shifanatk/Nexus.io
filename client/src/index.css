@@ -1,0 +1,121 @@
+/* client/src/index.css */
+:root {
+  --bg-color: #0f0f13;          /* Deepest Space Black */
+  --card-bg: #1a1a23;           /* Slightly lighter panel */
+  --text-primary: #ffffff;      /* Bright White */
+  --text-secondary: #a0a0b0;    /* Muted Grey */
+  --accent: #7c4dff;            /* Neon Purple */
+  --accent-hover: #651fff;      /* Darker Purple */
+  --danger: #ff5252;            /* Soft Red */
+  --success: #69f0ae;           /* Neon Green */
+  --border: 1px solid #2a2a35;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- REUSABLE LAYOUTS --- */
+.container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.card {
+  background-color: var(--card-bg);
+  border: var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* The "Float" effect */
+  transition: transform 0.2s ease;
+}
+
+/* --- TYPOGRAPHY --- */
+h1, h2, h3 {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 1rem;
+}
+
+h1 { font-size: 2.5rem; background: linear-gradient(to right, #fff, #a0a0b0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+p { color: var(--text-secondary); line-height: 1.6; }
+
+/* --- FORMS & INPUTS --- */
+input, select {
+  width: 100%;
+  padding: 12px 16px;
+  background: #000000;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  margin-bottom: 15px;
+  box-sizing: border-box; /* Fixes width issues */
+  transition: border-color 0.2s;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* --- BUTTONS --- */
+button {
+  cursor: pointer;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  width: 100%;
+  box-shadow: 0 4px 15px rgba(124, 77, 255, 0.3); /* Purple Glow */
+}
+
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); }
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid #333;
+  color: var(--text-secondary);
+  padding: 8px 16px;
+}
+.btn-secondary:hover { border-color: white; color: white; }
+
+.btn-danger { background: rgba(255, 82, 82, 0.1); color: var(--danger); padding: 6px 12px; }
+.btn-danger:hover { background: var(--danger); color: white; }
+
+.btn-invite { background: #2196f3; color: white; margin-left: 10px; }
+
+/* --- LISTS --- */
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #2a2a35;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.list-item:hover { background: rgba(255,255,255,0.03); }
+.list-item:last-child { border-bottom: none; }
+
+.status-badge {
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-right: 10px;
+  background: #333;
+}
+.status-done { background: rgba(105, 240, 174, 0.2); color: var(--success); text-decoration: line-through; }
