@@ -2,35 +2,30 @@ const mongoose = require('mongoose');
 
 const SpaceSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  subspaces: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Subspace' }],
   
-  // Who owns this space?
-  owner: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'User',
-    required: true
-  },
-
-  // NEW: Who else is allowed here? (The Team)
-  members: [{ 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'User' 
-  }], 
-
-  // The actual tasks inside
-  // Enhanced Tasks
+  // --- NEW: WORKSPACE LEVEL TASKS ---
   tasks: [{
-    description: String, // The short title
-    longDescription: { type: String, default: '' }, // NEW: The details
-    status: { type: String, enum: ['Pending', 'Done'], default: 'Pending' },
+    description: String,
+    longDescription: { type: String, default: '' },
+    status: { type: String, enum: ['Todo', 'Done'], default: 'Todo' },
     
-    // NEW: Chat specific to this task
+    attachments: [{
+      originalName: String,
+      path: String,
+      uploadedAt: { type: Date, default: Date.now }
+    }],
+    
     comments: [{
-      sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       username: String,
       text: String,
       createdAt: { type: Date, default: Date.now }
     }]
-  }]
+  }],
+
+  createdAt: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('Space', SpaceSchema);

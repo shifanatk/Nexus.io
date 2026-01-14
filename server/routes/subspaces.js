@@ -1,95 +1,90 @@
-const express = require('express');
-const router = express.Router();
+const router = require('express').Router();
 const Subspace = require('../models/Subspace');
 const Space = require('../models/Space');
-const User = require('../models/User');
+const multer = require('multer');
 
-// 1. CREATE SUBSPACE (Only Admin/Members of parent space can do this)
-router.post('/create', async (req, res) => {
+// --- MULTER CONFIG ---
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/'),
+  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
+});
+const upload = multer({ storage });
+
+// 1. Create Subspace
+router.post('/', async (req, res) => {
   try {
-    const { name, parentSpaceId, memberIds } = req.body; // memberIds = list of users allowed
-    
-    const newSubspace = new Subspace({
-      name,
-      parentSpace: parentSpaceId,
-      members: memberIds || [], 
-      tasks: []
-    });
-
+    const newSubspace = new Subspace(req.body);
     const savedSubspace = await newSubspace.save();
-    res.status(201).json(savedSubspace);
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
-// 2. GET SUBSPACES (Only if user is allowed in them)
-router.get('/space/:parentSpaceId/:userId', async (req, res) => {
-  try {
-    const subspaces = await Subspace.find({
-      parentSpace: req.params.parentSpaceId,
-      members: req.params.userId // Only find subspaces where I am a member
+    // Link to Parent Space
+    await Space.findByIdAndUpdate(req.body.space, {
+      $push: { subspaces: savedSubspace._id }
     });
-    res.status(200).json(subspaces);
-  } catch (err) {
-    res.status(500).json(err);
-  }
+    res.status(200).json(savedSubspace);
+  } catch (err) { res.status(500).json(err); }
 });
 
-// 3. GET SINGLE SUBSPACE
+// 2. Get Subspace
 router.get('/:id', async (req, res) => {
   try {
     const subspace = await Subspace.findById(req.params.id);
     res.status(200).json(subspace);
-  } catch (err) {
-    res.status(500).json(err);
-  }
+  } catch (err) { res.status(500).json(err); }
 });
 
-// 4. ADD TASK TO SUBSPACE
+// 3. Add Task
 router.post('/:id/tasks', async (req, res) => {
   try {
     const subspace = await Subspace.findById(req.params.id);
     subspace.tasks.push({ description: req.body.description });
     await subspace.save();
     res.status(200).json(subspace);
-  } catch (err) {
-    res.status(500).json(err);
-  }
+  } catch (err) { res.status(500).json(err); }
 });
 
-// 5. TOGGLE TASK
+// 4. Toggle Task Status
 router.patch('/:id/tasks/:taskId', async (req, res) => {
   try {
     const subspace = await Subspace.findById(req.params.id);
     const task = subspace.tasks.id(req.params.taskId);
-    task.status = task.status === 'Pending' ? 'Done' : 'Pending';
+    task.status = task.status === 'Done' ? 'Todo' : 'Done';
     await subspace.save();
     res.status(200).json(subspace);
-  } catch (err) {
-    res.status(500).json(err);
-  }
+  } catch (err) { res.status(500).json(err); }
 });
-// ADD MEMBER TO SUBSPACE (Invite after creation)
-router.post('/:id/invite', async (req, res) => {
-  try {
-    const { username } = req.body;
-    const User = require('../models/User'); 
-    
-    // 1. Find the user
-    const user = await User.findOne({ username });
-    if (!user) return res.status(404).json("User not found!");
 
-    // 2. Add to subspace
+// 5. UPDATE DESCRIPTION (The Missing Route)
+router.put('/:id/tasks/:taskId', async (req, res) => {
+  try {
     const subspace = await Subspace.findById(req.params.id);
-    if (!subspace.members.includes(user._id)) {
-      subspace.members.push(user._id);
-      await subspace.save();
+    const task = subspace.tasks.id(req.params.taskId);
+    if (req.body.longDescription !== undefined) {
+      task.longDescription = req.body.longDescription;
     }
-    
+    await subspace.save();
     res.status(200).json(subspace);
-  } catch (err) {
-    res.status(500).json(err);
-  }
+  } catch (err) { res.status(500).json(err); }
 });
+
+// 6. UPLOAD ATTACHMENT
+router.post('/:id/tasks/:taskId/attachment', upload.single('file'), async (req, res) => {
+  try {
+    const subspace = await Subspace.findById(req.params.id);
+    const task = subspace.tasks.id(req.params.taskId);
+    task.attachments.push({ originalName: req.file.originalname, path: req.file.path });
+    await subspace.save();
+    res.status(200).json(subspace);
+  } catch (err) { res.status(500).json(err); }
+});
+
+// 7. ADD COMMENT (The Other Missing Route)
+router.post('/:id/tasks/:taskId/comment', async (req, res) => {
+  try {
+    const subspace = await Subspace.findById(req.params.id);
+    const task = subspace.tasks.id(req.params.taskId);
+    task.comments.push({ username: req.body.username, text: req.body.text });
+    await subspace.save();
+    res.status(200).json(subspace);
+  } catch (err) { res.status(500).json(err); }
+});
+
 module.exports = router;

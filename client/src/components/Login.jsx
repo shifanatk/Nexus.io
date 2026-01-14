@@ -10,36 +10,30 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // 1. Send login request
-      const res = await axios.post('http://localhost:5000/api/auth/login', {
-        username,
-        password
+      const res = await axios.post('http://localhost:5000/api/auth/login', { 
+        username, 
+        password 
       });
-      
-      // 2. Debugging: Check if token exists in console
-      console.log("Server response:", res.data);
 
-      // 3. Check if token exists in response
       if (res.data.token) {
+        // 1. Save Token
         localStorage.setItem('token', res.data.token);
         
-        // Save user data for Dashboard component
-        if (res.data.user) {
-          localStorage.setItem('user', JSON.stringify(res.data.user));
-        }
+        // 2. Save User (Crucial for Dashboard to work)
+        localStorage.setItem('user', JSON.stringify(res.data.user)); 
 
         alert('Login Successful!');
         
-        // 4. Navigate to dashboard
+        // 3. Go to Dashboard
         navigate('/dashboard');
-      } else {
-        alert('Login failed: No token received');
+        
+        // Optional: Force page load to ensure Navbar updates
+        window.location.reload(); 
       }
-
     } catch (err) {
       console.error(err);
-      // Detailed error for debugging
-      const errorMessage = err.response?.data?.message || 'Invalid Credentials or Server Error';
+      // Detailed error message
+      const errorMessage = err.response?.data?.message || err.response?.data || 'Invalid Credentials';
       alert(errorMessage);
     }
   };

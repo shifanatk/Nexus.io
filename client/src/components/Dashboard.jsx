@@ -1,78 +1,89 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const [spaces, setSpaces] = useState([]);
   const [newSpaceName, setNewSpaceName] = useState('');
-  const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
+  
+  // Get user from storage
+  const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
-    if (!user) { navigate('/login'); } 
-    else { fetchSpaces(); }
+    if (!user) {
+      navigate('/login');
+    } else {
+      fetchSpaces();
+    }
   }, []);
 
   const fetchSpaces = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/spaces/user/${user._id}`);
+      // Pass userId to get ONLY my spaces
+      const res = await axios.get(`http://localhost:5000/api/spaces?userId=${user._id}`);
       setSpaces(res.data);
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleCreateSpace = async (e) => {
     e.preventDefault();
+    if (!newSpaceName) return;
+
     try {
-      await axios.post('http://localhost:5000/api/spaces/create', {
+      await axios.post('http://localhost:5000/api/spaces', {
         name: newSpaceName,
-        ownerId: user._id
+        owner: user._id // <--- Send the owner ID
       });
       setNewSpaceName('');
-      fetchSpaces();
-    } catch (err) { console.error(err); }
+      fetchSpaces(); // Refresh list
+    } catch (err) {
+      console.error(err);
+      alert('Error creating space');
+    }
   };
 
   return (
-    <div className="container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-        <h1>Welcome, {user?.username} 👋</h1>
-        <button className="btn-secondary" onClick={() => {
-          localStorage.removeItem('user');
-          window.location.href = '/login';
-        }}>Logout</button>
-      </div>
+    <div className="container" style={{maxWidth: '1000px'}}>
+      <h1 style={{color: 'white'}}>Welcome, {user?.username} 👋</h1>
       
-      {/* Create Section */}
-      <div className="card">
-        <h3>🚀 Create New Workspace</h3>
-        <form onSubmit={handleCreateSpace} style={{ display: 'flex', gap: '10px' }}>
+      {/* --- CREATE SPACE SECTION --- */}
+      <div className="card" style={{marginBottom: '30px', border: '1px solid #7c4dff'}}>
+        <h3>Create New Workspace</h3>
+        <form onSubmit={handleCreateSpace} style={{display: 'flex', gap: '10px'}}>
           <input 
             type="text" 
-            placeholder="Project Name..." 
+            placeholder="Workspace Name (e.g. Marketing Team)" 
             value={newSpaceName}
             onChange={(e) => setNewSpaceName(e.target.value)}
-            style={{ marginBottom: 0 }} // Override global input margin for this row
+            style={{marginBottom: 0}}
           />
-          <button type="submit" className="btn-primary" style={{ width: 'auto' }}>
-            + Create
-          </button>
+          <button className="btn-primary" style={{width: 'auto'}}>Create</button>
         </form>
       </div>
 
-      {/* List Section */}
-      <h3 style={{ color: '#a0a0b0' }}>Your Workspaces</h3>
-      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        {spaces.length === 0 ? <p style={{ padding: '20px' }}>No spaces yet.</p> : (
-          spaces.map((space) => (
-            <div 
-              key={space._id} 
-              className="list-item"
-              onClick={() => navigate(`/space/${space._id}`)}
-            >
-              <strong>{space.name}</strong>
-              <span style={{ fontSize: '0.8rem', color: '#666' }}>ID: {space._id.toString().slice(-4)}</span>
+      {/* --- SPACES LIST --- */}
+      <h3 style={{color: '#aaa'}}>Your Workspaces</h3>
+      <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px'}}>
+        
+        {spaces.map((space) => (
+          <Link key={space._id} to={`/space/${space._id}`} style={{textDecoration: 'none'}}>
+            <div className="card" style={{height: '100%', transition: 'transform 0.2s', cursor: 'pointer'}}>
+              <h2 style={{marginTop: 0, color: '#fff'}}>🏢 {space.name}</h2>
+              <p style={{color: '#888', fontSize: '0.9rem'}}>
+                {space.members.length} Members
+              </p>
+              <div style={{marginTop: '10px', fontSize: '0.8rem', color: '#7c4dff'}}>
+                Enter Workspace →
+              </div>
             </div>
-          ))
+          </Link>
+        ))}
+
+        {spaces.length === 0 && (
+          <p style={{color: '#666'}}>No workspaces yet. Create one above!</p>
         )}
       </div>
     </div>

@@ -2,30 +2,23 @@ const mongoose = require('mongoose');
 
 const SubspaceSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  space: { type: mongoose.Schema.Types.ObjectId, ref: 'Space' },
   
-  // Link to the main Workspace
-  parentSpace: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Space', 
-    required: true 
-  },
-
-  // The "VIP List" (Only these users can see/edit this subspace)
-  members: [{ 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'User' 
-  }], 
-
-  // Tasks specific to this subspace
-  // Enhanced Tasks
+  // EMBEDDED TASKS
   tasks: [{
-    description: String, // The short title
-    longDescription: { type: String, default: '' }, // NEW: The details
-    status: { type: String, enum: ['Pending', 'Done'], default: 'Pending' },
+    description: String,
+    longDescription: { type: String, default: '' },
+    status: { type: String, enum: ['Todo', 'Done'], default: 'Todo' },
     
-    // NEW: Chat specific to this task
+    // ATTACHMENTS
+    attachments: [{
+      originalName: String,
+      path: String,
+      uploadedAt: { type: Date, default: Date.now }
+    }],
+    
+    // COMMENTS
     comments: [{
-      sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       username: String,
       text: String,
       createdAt: { type: Date, default: Date.now }

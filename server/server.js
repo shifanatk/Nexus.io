@@ -8,6 +8,8 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+// Add this line in server.js
+app.use('/uploads', express.static('uploads'));
 //Routes
 const authRoute = require('./routes/auth');
 app.use('/api/auth', authRoute);

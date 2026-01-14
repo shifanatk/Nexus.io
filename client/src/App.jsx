@@ -6,7 +6,7 @@ import Register from './components/Register';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import SpaceView from './components/SpaceView';
-import SubspaceView from './components/t'; 
+import SubspaceView from './components/SubspaceView'; 
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
