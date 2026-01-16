@@ -19,7 +19,7 @@ const SubspaceView = () => {
 
   const fetchSubspace = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/subspaces/${id}`);
+      const res = await axios.get(`https://nexus-io.onrender.com/api/subspaces/${id}`);
       setSubspace(res.data);
     } catch (err) { console.error(err); }
   };
@@ -28,7 +28,7 @@ const SubspaceView = () => {
     e.preventDefault();
     if (!taskDesc.trim()) return;
     try {
-      await axios.post(`http://localhost:5000/api/subspaces/${id}/tasks`, { description: taskDesc });
+      await axios.post(`https://nexus-io.onrender.com/api/subspaces/${id}/tasks`, { description: taskDesc });
       setTaskDesc('');
       fetchSubspace();
     } catch (err) { console.error(err); }
@@ -36,7 +36,7 @@ const SubspaceView = () => {
 
   const toggleTask = async (taskId) => {
     try {
-      await axios.patch(`http://localhost:5000/api/subspaces/${id}/tasks/${taskId}`);
+      await axios.patch(`https://nexus-io.onrender.com/api/subspaces/${id}/tasks/${taskId}`);
       fetchSubspace();
     } catch (err) { console.error(err); }
   };

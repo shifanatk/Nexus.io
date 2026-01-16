@@ -23,8 +23,8 @@ const ChatRoom = ({ contextId, contextType, user, isOwner }) => {
     try {
       // Determine URL based on context (Space or Subspace)
       const url = contextType === 'space' 
-        ? `http://localhost:5000/api/messages/space/${contextId}`
-        : `http://localhost:5000/api/messages/subspace/${contextId}`;
+        ? `https://nexus-io.onrender.com/api/messages/space/${contextId}`
+        : `https://nexus-io.onrender.com/api/messages/subspace/${contextId}`;
       
       const res = await axios.get(url);
       setMessages(res.data);
@@ -36,7 +36,7 @@ const ChatRoom = ({ contextId, contextType, user, isOwner }) => {
     if (!newMessage.trim()) return;
 
     try {
-      await axios.post('http://localhost:5000/api/messages/send', {
+      await axios.post('https://nexus-io.onrender.com/api/messages/send', {
         senderId: user._id,
         username: user.username,
         content: newMessage,

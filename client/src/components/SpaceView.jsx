@@ -20,7 +20,7 @@ const SpaceView = () => {
 
   const fetchSpace = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/spaces/${id}`);
+      const res = await axios.get(`https://nexus-io.onrender.com/api/spaces/${id}`);
       setSpace(res.data);
     } catch (err) { console.error(err); }
   };
@@ -29,7 +29,7 @@ const SpaceView = () => {
     e.preventDefault();
     if (!taskDesc.trim()) return;
     try {
-      await axios.post(`http://localhost:5000/api/spaces/${id}/tasks`, { description: taskDesc });
+      await axios.post(`https://nexus-io.onrender.com/api/spaces/${id}/tasks`, { description: taskDesc });
       setTaskDesc('');
       fetchSpace();
     } catch (err) { console.error(err); }
@@ -37,7 +37,7 @@ const SpaceView = () => {
 
   const toggleTask = async (taskId) => {
     try {
-      await axios.patch(`http://localhost:5000/api/spaces/${id}/tasks/${taskId}`);
+      await axios.patch(`https://nexus-io.onrender.com/api/spaces/${id}/tasks/${taskId}`);
       fetchSpace();
     } catch (err) { console.error(err); }
   };
@@ -45,7 +45,7 @@ const SpaceView = () => {
   const createSubspace = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/subspaces', { name: subspaceName, space: id });
+      await axios.post('https://nexus-io.onrender.com/api/subspaces', { name: subspaceName, space: id });
       setSubspaceName('');
       fetchSpace();
     } catch (err) { console.error(err); }
@@ -54,7 +54,7 @@ const SpaceView = () => {
   const handleInvite = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:5000/api/spaces/${id}/invite`, { username: inviteName });
+      await axios.put(`https://nexus-io.onrender.com/api/spaces/${id}/invite`, { username: inviteName });
       alert('User added!');
       setInviteName('');
       fetchSpace();

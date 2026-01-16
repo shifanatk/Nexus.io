@@ -12,8 +12,8 @@ const TaskModal = ({ spaceId, task, close, refresh, isWorkspace }) => {
 
   // Logic to switch between Space URL and Subspace URL
   const baseUrl = isWorkspace 
-    ? `http://localhost:5000/api/spaces/${spaceId}`
-    : `http://localhost:5000/api/subspaces/${spaceId}`;
+    ? `https://nexus-io.onrender.com/api/spaces/${spaceId}`
+    : `https://nexus-io.onrender.com/api/subspaces/${spaceId}`;
 
   const saveDescription = async () => {
     try {
@@ -93,7 +93,7 @@ const TaskModal = ({ spaceId, task, close, refresh, isWorkspace }) => {
                   {task.attachments?.map((att, i) => (
                     <div key={i} style={styles.fileItem}>
                       <span>📄 {att.originalName}</span>
-                      <a href={`http://localhost:5000/${att.path}`} target="_blank" rel="noopener noreferrer" style={{color: '#7c4dff'}}>Download</a>
+                      <a href={`https://nexus-io.onrender.com/${att.path}`} target="_blank" rel="noopener noreferrer" style={{color: '#7c4dff'}}>Download</a>
                     </div>
                   ))}
                   {(!task.attachments || task.attachments.length === 0) && <p style={{fontSize:'0.9rem', color:'#666'}}>No attachments.</p>}

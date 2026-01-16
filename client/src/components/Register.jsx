@@ -10,7 +10,7 @@ const Register = () => {
     e.preventDefault();
     try {
       // This sends the data to your Node.js Backend
-      const res = await axios.post('http://localhost:5000/api/auth/register', {
+      const res = await axios.post('https://nexus-io.onrender.com/api/auth/register', {
         username,
         password,
         role

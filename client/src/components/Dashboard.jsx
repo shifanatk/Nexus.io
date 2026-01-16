@@ -21,7 +21,7 @@ const Dashboard = () => {
   const fetchSpaces = async () => {
     try {
       // Pass userId to get ONLY my spaces
-      const res = await axios.get(`http://localhost:5000/api/spaces?userId=${user._id}`);
+      const res = await axios.get(`https://nexus-io.onrender.com/api/spaces?userId=${user._id}`);
       setSpaces(res.data);
     } catch (err) {
       console.error(err);
@@ -33,7 +33,7 @@ const Dashboard = () => {
     if (!newSpaceName) return;
 
     try {
-      await axios.post('http://localhost:5000/api/spaces', {
+      await axios.post('https://nexus-io.onrender.com/api/spaces', {
         name: newSpaceName,
         owner: user._id // <--- Send the owner ID
       });
