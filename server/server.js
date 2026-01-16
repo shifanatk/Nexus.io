@@ -19,9 +19,10 @@ const subspacesRoute = require('./routes/subspaces');
 app.use('/api/subspaces', subspacesRoute);
 const messagesRoute = require('./routes/messages');
 app.use('/api/messages', messagesRoute);
+const dbUrl = process.env.MONGO_URI
 // Database Connection
 // We use 127.0.0.1 to avoid common connection delays on Windows
-mongoose.connect('mongodb://127.0.0.1:27017/workflowDB')
+mongoose.connect(dbUrl)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch(err => console.error("❌ MongoDB Error:", err));
 
