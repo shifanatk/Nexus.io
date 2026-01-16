@@ -74,7 +74,7 @@ router.post('/:id/tasks/:taskId/attachment', upload.single('file'), async (req, 
     await subspace.save();
     res.status(200).json(subspace);
   } catch (err) { res.status(500).json(err); }
-});z
+});
 
 // 7. ADD COMMENT (The Other Missing Route)
 router.post('/:id/tasks/:taskId/comment', async (req, res) => {
